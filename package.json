@@ -1,0 +1,42 @@
+{
+  "name": "ace_code_editor",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "ace-builds": "^1.37.0",
+    "cors": "^2.8.5",
+    "cra-template": "1.2.0",
+    "express": "^4.21.2",
+    "react": "^18.3.1",
+    "react-ace": "^13.0.0",
+    "react-dom": "^18.3.1",
+    "react-scripts": "5.0.1",
+    "tmp-promise": "^3.0.3",
+    "web-vitals": "^4.2.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "server": "node server/server.js",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

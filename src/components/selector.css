@@ -1,0 +1,28 @@
+:root {
+    --primary-color: #8b2424;
+    --focus-color: #61dafb;
+  }
+
+.selector {
+  margin: 12px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+}
+
+.selector select {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid var(--primary-color);
+  background-color: white;
+  appearance: none; /* Убирает стандартные стили select в некоторых браузерах */
+  cursor: pointer;
+}
+
+.selector select:focus {
+    border-color: var(--focus-color); /* Используем CSS-переменную */
+    outline: none; /* Убирает стандартную обводку при фокусе */
+    box-shadow: 0 0 5px rgba(97, 218, 251, 0.3); /* Добавляем тень для лучшей видимости фокуса */
+  }
