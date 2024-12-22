@@ -69,12 +69,13 @@ function App() {
 
   return (
     <div className="App">
+      <h1>Online Code Editor</h1>
       {/* Компонент Selector для выбора языка */}
       <Selector 
       className = "selector" // Класс для стилизации
         title='Choose language: ' // Заголовок селектора
         list={languages} // Список доступных языков
-        current={mode}  // Текущийвыбранный язык
+        current={mode}  // Текущий выбранный язык
         setMode={setMode} // Функция для обновления состояния mode
       />
       {/* Компонент Selector для выбора темы */}
@@ -94,7 +95,7 @@ function App() {
         name="UNIQUE_ID_OF_DIV" // Уникальный ID для div-контейнера редактора (важно для корректной работы)
         editorProps={{ $blockScrolling: true }} // Отключаем блочную прокрутку (может вызывать проблемы с позиционированием)
         setOptions={{
-          useWorker: true,  // Включаем использование web worker для асинхронной обработки (улучшает производительность, особенно для автодополнения)
+          useWorker: true,  // Включаем использование web worker для асинхронной обработки (улучшает производительность)
           enableBasicAutocompletion: true,  // Включаем базовое автодополнение
           enableLiveAutocompletion: true,    // Включаем использование сниппетов (шаблонов кода)
           enableSnippets: true,     // Включаем использование сниппетов (шаблонов кода)
