@@ -1,0 +1,22 @@
+.run-button {
+  background-color: #50fa7b;
+  border: none;
+  color: #1c1e21;
+  padding: 10px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 1rem;
+  align-self: flex-start;
+  margin-bottom: 16px;
+}
+
+.run-button:hover:not(:disabled) {
+  background-color: #44d96c;
+}
+
+.run-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+

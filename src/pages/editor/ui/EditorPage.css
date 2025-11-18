@@ -1,0 +1,14 @@
+.editor-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 60vh;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.5rem;
+  text-align: center;
+  color: #abb2bf;
+}
+

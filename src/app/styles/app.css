@@ -1,0 +1,14 @@
+.app {
+  background-color: #282c34;
+  border-radius: 8px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 95%;
+  color: #abb2bf;
+  max-width: 1700px;
+  margin: 10px auto;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
