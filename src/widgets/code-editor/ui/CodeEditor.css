@@ -1,0 +1,13 @@
+.code-editor {
+  min-width: 100%;
+  border: 1px solid #333;
+  border-radius: 4px;
+  min-height: 400px;
+  margin-bottom: 20px;
+}
+
+.ace_gutter {
+  background: #181818;
+  color: rgb(68, 68, 68);
+}
+

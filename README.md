@@ -1,106 +1,101 @@
 # Code Editor
 
-## Описание
+Простое SPA-приложение для запуска кода на Python и JavaScript прямо из браузера. Клиент построен по принципам Feature-Sliced Design (FSD), а сервер на Express выполняет код в изолированных временных файлах.
 
-Этот проект представляет собой простой онлайн редактор кода, позволяющий пользователям писать и выполнять код на Python и JavaScript. Для выполнения кода используется бэкенд на Node.js с Express, который запускает код с помощью `child_process`.
+## Возможности
 
-## Функциональность
+- Ace Editor с подсветкой и автодополнением
+- Переключение языка/темы оформления
+- Кнопка запуска с состоянием загрузки
+- Показ stdout/stderr для каждой попытки
 
-*   Редактор кода с подсветкой синтаксиса (используется Ace Editor).
-*   Выбор языка программирования (Python/JavaScript).
-*   Выполнение кода на сервере (Node.js/Express).
-*   Отображение результатов выполнения или сообщений об ошибках.
+## Технологический стек
 
-## Технологии
+- React 18 + Feature-Sliced Design
+- Ace Editor (`react-ace`, `ace-builds`)
+- Node.js + Express
+- `child_process.exec` + `tmp-promise` для безопасного исполнения кода
 
-*   React (фронтенд)
-*   Ace Editor
-*   Node.js
-*   Express
-*   child_process (для выполнения кода)
-*   cors
+## Структура клиента (FSD)
+
+```
+src/
+├─ app/            # точка входа приложения, глобальные стили
+├─ pages/          # страницы (здесь EditorPage)
+├─ widgets/        # крупные блоки (редактор, панель настроек, панель результата)
+├─ features/       # функциональные элементы (run-code)
+├─ shared/         # переиспользуемые сущности, API, конфиг
+```
+
+Такое деление упрощает масштабирование и тестирование отдельных частей UI.
 
 ## Установка и запуск
 
-1.  Клонируйте репозиторий:
+```bash
+git clone https://github.com/vladimir8korepanov/code_editor.git
+cd code_editor
+npm install
+```
 
-    ```bash
-    git clone (https://github.com/vladimir8korepanov/code_editor.git)
-    ```
+### Запуск сервера
 
-2.  Перейдите в директорию проекта:
+```bash
+npm run server
+# http://localhost:5000
+```
 
-    ```bash
-    cd code-editor
-    ```
+Сервер пишет код во временный файл с нужным расширением и запускает интерпретатор (`python` или `node`), что позволяет корректно обрабатывать многострочные скрипты и строки с кавычками.
 
-3.  Установите зависимости (как для фронтенда, так и для бэкенда):
+### Запуск клиента
 
-    ```bash
-    npm install
-    cd server
-    npm install
-    cd ../
-    ```
-или
-    ```bash
-    npm install express cors
-    ```
+```bash
+npm start
+# http://localhost:3000
+```
 
-4.  Запустите бэкенд (сервер Node.js):
+## Взаимодействие клиента и сервера
 
-    ```bash
-    cd server
-    node server.js
-    ```
-
-    Сервер запустится на `http://localhost:5000`.
-
-5.  В другом терминале запустите React-приложение (фронтенд):
-
-    ```bash
-    npm start
-    ```
-
-    Приложение будет доступно по адресу `http://localhost:3000`.
-
-## Архитектура
-
-Проект состоит из двух частей:
-
-*   **Фронтенд (React):** Отвечает за пользовательский интерфейс, включая редактор кода, выбор языка и отображение результатов. Отправляет POST-запросы на бэкенд для выполнения кода.
-*   **Бэкенд (Node.js/Express):** Получает код от фронтенда, выполняет его с помощью `child_process` (запуская интерпретаторы Python или Node.js), и возвращает результат (stdout или stderr) в формате JSON.
-
-## api.js (пример):
+`shared/api/codeExecutor.js` отправляет код на `/api/execute`:
 
 ```javascript
 export const executeCode = async (language, code) => {
-    try {
-        const response = await fetch('http://localhost:5000/api/execute', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ language, code }),
-        });
+  const response = await fetch('http://localhost:5000/api/execute', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ language, code }),
+  });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-        }
+  if (!response.ok) {
+    throw new Error('Server error');
+  }
 
-        return await response.json();
-    } catch (error) {
-        return { status: 'error', error: error.message };
-    }
+  return response.json();
 };
 ```
 
-## server.js (краткое описание):
+На сервере `server/server.js` обрабатывает запрос, пишет код во временный файл и исполняет его:
 
-Сервер на Node.js с Express обрабатывает POST-запросы на /api/execute. Он получает язык и код из тела запроса, формирует команду для выполнения (например, python -c "<code>"), запускает ее с помощью child_process.exec, и возвращает результат (stdout или stderr) в формате JSON.
-## CORS
+```javascript
+const runFromTempFile = async (code, extension, command) => {
+  const { path: tempFilePath, cleanup } = await file({ postfix: extension });
+  await fs.writeFile(tempFilePath, code);
+  try {
+    const { stdout, stderr } = await execPromise(`${command} "${tempFilePath}"`);
+    if (stderr) {
+      return { error: stderr };
+    }
+    return { output: stdout };
+  } finally {
+    await cleanup();
+  }
+};
+```
 
-Для разрешения запросов с http://localhost:3000 (порт React-приложения) на http://localhost:5000 (порт сервера) используется middleware cors.
+Ответ всегда приходит в виде `{ status, output?, error? }`, что упрощает отображение результата на клиенте.
 
-### Автор: Владимир Корепанов
+## Примечания безопасности
+
+Приложение предназначено только для локального запуска. Выполнение произвольного кода на сервере потенциально опасно, поэтому не размещайте этот сервис в открытом доступе без дополнительной песочницы и ограничений.
+
+---
+Автор: Владимир Корепанов
